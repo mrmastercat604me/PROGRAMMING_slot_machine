@@ -137,20 +137,19 @@ def slot_spin_visual(slots,rows,cols,symbols,bet,lines,total_bet,times=1):
 				sys.stdout.flush()
 				time.sleep(0.4)
 				clear()
-				
 				print(f"You are betting ${bet} on {lines} lines.")
 				print(f"Total bet is equal to: ${total_bet}")
-				print_slot_machine(slots2)
 				# print(f"print from:  slots[{rev_row}][{col}]  rev_row{rev_row},col{col}")
 				# print(f"print to:  slots[0][{col}]  row0,col{col}\n")
 				slots2[col].insert(0, slots[col][rev_row])
 				del slots2[col][3]
+				print_slot_machine(slots2)
 
 def check_winnings(columns, lines, bet, values):
 	winnings = 0
 	winning_lines = []
 	for line in range(lines):
-		symbol = columns[0][line]
+		symbol = columns[line][0]
 		for column in columns:
 			symbol_to_check = column[line]
 			if symbol != symbol_to_check:
@@ -186,13 +185,14 @@ def game(balance):
 		else:
 			txt("You won on lines: ", *winning_lines)
 	time.sleep(2)
+	input("Enter to Continue")
 	clear()
 	return winnings - total_bet
 ####
 
 #GAME
 if __name__ == '__main__':
-	roll_credits(credits,scroll=False)
+	roll_credits(credits,scroll=True)
 
 	# init_balance = deposit()
 	# balance = init_balance
