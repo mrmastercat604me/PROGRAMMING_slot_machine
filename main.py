@@ -66,7 +66,7 @@ def bet_number_lines(balance):
 		bet_lines = input(": ")
 		if bet_lines.isdigit():
 			bet_lines = int(bet_lines)
-			if bet_lines > balance:
+			if bet_lines > balance and MIN_LINES <= bet_lines <= MAX_LINES:
 				txt("Number of bet lines must be in range of funds.")
 			elif MIN_LINES <= bet_lines <= MAX_LINES:
 				break
@@ -160,34 +160,41 @@ def check_winnings(columns, lines, bet, values):
 	return winnings, winning_lines
 	
 def game(balance):
-	lines = bet_number_lines(balance)
-	while True:
-		bet = get_bet(balance, lines)
-		total_bet = lines * bet
-		if total_bet <= balance:
-			break
-		else:
-			txt(f"Your current balance is: ${balance}. You need to bet a valid amount in range.")
-	time.sleep(1)
-	clear()
-	txt(f"You are betting ${bet} on {lines} lines.")
-	txt(f"Total bet is equal to: ${total_bet}")
-	time.sleep(0.5)
+	if balance > 0:
+		lines = bet_number_lines(balance)
+	if balance > 0:
+		while True:
+			bet = get_bet(balance, lines)
+			total_bet = lines * bet
+			if total_bet <= balance:
+				break
+			else:
+				txt(f"Your current balance is: ${balance}. You need to bet a valid amount in range.")
+		time.sleep(1)
+		clear()
+		txt(f"You are betting ${bet} on {lines} lines.")
+		txt(f"Total bet is equal to: ${total_bet}")
+		time.sleep(0.5)
 
-	slots = gen_slot_machine(ROWS,COLS,SYMBOL_COUNT)
-	slot_spin_visual(slots,ROWS,COLS,SYMBOL_COUNT,bet,lines,total_bet)
-	time.sleep(1)
-	winnings, winning_lines = check_winnings(slots, lines, bet, SYMBOL_VALUES)
-	txt(f"You Won ${winnings}")
-	if len(winning_lines) > 0:
-		if len(winning_lines) == 1:
-			txt("You won on line: ", *winning_lines)
-		else:
-			txt("You won on lines: ", *winning_lines)
-	time.sleep(2)
-	input("Enter to Continue")
-	clear()
-	return winnings - total_bet
+		slots = gen_slot_machine(ROWS,COLS,SYMBOL_COUNT)
+		slot_spin_visual(slots,ROWS,COLS,SYMBOL_COUNT,bet,lines,total_bet)
+		time.sleep(1)
+		winnings, winning_lines = check_winnings(slots, lines, bet, SYMBOL_VALUES)
+		txt(f"You Won ${winnings}")
+		if len(winning_lines) > 0:
+			if len(winning_lines) == 1:
+				txt("You won on line: ", *winning_lines)
+			else:
+				txt("You won on lines: ", *winning_lines)
+		time.sleep(2)
+		input("Enter to Continue")
+		clear()
+		return winnings - total_bet
+	else:
+		txt("You cannot play with less than $1")
+		time.sleep(0.2)
+		clear()
+		return 0
 ####
 
 #GAME
@@ -204,8 +211,11 @@ if __name__ == '__main__':
 		action = input(" : ")
 		clear()
 		if action.lower() == "e":
-			if balance != init_balance:
-				txt(f"You left with ${balance}")
+			try:
+				if balance != init_balance:
+					txt(f"You left with ${balance}")
+			except NameError:
+				pass
 			running = False
 			break
 		elif action.lower() == "b":
